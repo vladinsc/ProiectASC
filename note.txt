@@ -1,0 +1,17 @@
+loop2:
+mov %ecx, aux
+push %ecx
+push $formatString
+call printf
+pop %ebx
+pop %ebx
+mov aux, %ecx
+add $1, %ecx
+cmp $1001, %ecx
+jne loop2
+
+
+
+
+gcc -m32 -z execstack sistemunidimensional.s -o sistunid -no-pie
+
