@@ -77,15 +77,7 @@ cmp $-1, %dx
 je exit_getfr
 xor %edx, %edx
 exit_get:
-movw b, %dx
-push b
-movw a, %dx
-push a
-push $formatInterval
-call printf
-pop %edx
-pop %edx
-pop %edx
+
 exit_getfr:
 popl %ebp 
 ret
@@ -111,6 +103,16 @@ xor %ebx, %ebx
 xor %ecx, %ecx
 xor %edx, %edx
 call getfunction
+movw b, %dx
+push b
+movw a, %dx
+push a
+push $formatInterval
+call printf
+pop %edx
+pop %edx
+pop %edx
+
 xor %edx, %edx
 movw b, %dx
 movw %dx, aux
@@ -361,6 +363,16 @@ xor %ebx, %ebx
 
 call getfunction
 
+movw b, %dx
+push b
+movw a, %dx
+push a
+push $formatInterval
+call printf
+pop %edx
+pop %edx
+pop %edx
+
 jmp contloop_principal
 
 etdelete: 
@@ -370,9 +382,43 @@ call printf
 pop %edx
 pop %edx
 
+movb $0, fd
+push $fd
+push $formatInput
+call scanf 
+pop %edx
+pop %edx
+
+xor %eax, %eax
+xor %ebx, %ebx
+xor %ecx, %ecx
+xor %edx, %edx
+movw $0, a
+movw $0, b
+
+ call getfunction
+
+xor %eax, %eax
+xor %ebx, %ebx
+xor %ecx, %ecx
+xor %edx, %edx
 
 
+movw a, %cx
+movw b, %dx
+loop_delete:
+movb $0, (%edi, %ecx)
+add $1, %cx
+cmp %dx, %cx
+jle loop_delete
 
+ call afisare_memorie
+
+xor %eax, %eax
+xor %ebx, %ebx
+xor %ecx, %ecx
+xor %edx, %edx
+# ---------- SFARSIT DELETE ----------------
 jmp contloop_principal
 
 etdefrag: 
@@ -402,6 +448,8 @@ jne loop_principal
 
 xor %ecx, %ecx
 
+
+# afisare_memorie
 call afisare_memorie
 
 xor %eax, %eax
