@@ -6,6 +6,7 @@ indiceop: .word 0
 eroareSpatiuAdaugare: .asciz "Nu exsita pentru a adauga fisierul.\n"
 formatAfisareADD: .asciz "%ld: (%ld, %ld)\n"
 formatInterval: .asciz "(%hu, %hu)\n"
+formatInputADD: .asciz "%hu %hu\n"
 xxx: .space 4
 nrop: .word 0
 nropadd: .word 0
@@ -115,23 +116,15 @@ xor %ebx, %ebx
 xor %ecx, %ecx
 xor %edx, %edx
 call getfunction
-
-xor %eax, %eax
-movw b, %ax
-pushl %eax
-xor %eax, %eax
-movw a, %ax
-pushl %eax
-xor %eax, %eax
-movb fd, %al
-pushl %eax
-push $formatAfisareADD
+movw b, %dx
+push b
+movw a, %dx
+push a
+push $formatInterval
 call printf
 pop %edx
-popl %edx
-popl %edx
-popl %edx
-xor %edx, %edx
+pop %edx
+pop %edx
 
 xor %edx, %edx
 movw b, %dx
@@ -167,16 +160,12 @@ xor %edx, %edx
 
 movw a, %cx
 movw b, %dx
-cmp $-1, %cx
-je exit_delete_function
-cmp $-1, %dx
-je exit_delete_function
 loop_delete:
 movb $0, (%edi, %ecx)
 add $1, %cx
 cmp %dx, %cx
 jle loop_delete
-exit_delete_function:
+
 popl %ebp
 ret
 
@@ -238,12 +227,12 @@ cmp $4, %bx
 jg eroare_indice_op
 # ----
 etadd: 
-# push $1
-# push $formatOutput
-# call printf
-# pop %edx
-# pop %edx
-# xor %ecx, %ecx
+push $1
+push $formatOutput
+call printf
+pop %edx
+pop %edx
+xor %ecx, %ecx
 # citire nropadd
 push $nropadd
 push $formatInput
@@ -263,19 +252,16 @@ je exit_loop_add
 sub $1, %ecx 
 movw %cx, nropadd
 push $fd
-push $formatInput
-call scanf
-pop %edx
-pop %edx
-
-xor %ebx, %ebx
-movb fd, %bl
-
-
-# Citire dimensiune fisier in kb
 push $_f_size
-push $formatInput
-call scanf
+push $formatInputADD
+call scanf 
+pop %edx
+pop %edx
+pop %edx
+
+push _f_size
+push $formatOutput
+call printf
 pop %edx
 pop %edx
 
@@ -377,11 +363,11 @@ jmp contloop_principal
 
 
 etget:  # !!! De Adaugat cazul in care fisierul nu exista !!! 
-# push $2
-# push $formatOutput
-# call printf
-# pop %edx
-# pop %edx
+push $2
+push $formatOutput
+call printf
+pop %edx
+pop %edx
 
 movb $0, fd
 push $fd
@@ -409,11 +395,11 @@ pop %edx
 jmp contloop_principal
 
 etdelete: 
-# push $3
-# push $formatOutput
-# call printf
-# pop %edx
-# pop %edx
+push $3
+push $formatOutput
+call printf
+pop %edx
+pop %edx
 
 movb $0, fd
 push $fd
@@ -435,11 +421,11 @@ jmp contloop_principal
 
 # ---------- SFARSIT DELETE ----------------
 etdefrag: 
-# push $4
-# push $formatOutput
-# call printf
-# pop %edx
-# pop %edx
+push $4
+push $formatOutput
+call printf
+pop %edx
+pop %edx
 
  xor %eax, %eax
  xor %ebx, %ebx
@@ -566,7 +552,7 @@ xor %ebx, %ebx
 xor %ecx, %ecx
 xor %edx, %edx
 
-# afisare_spatiu:
+#  afisare_spatiu:
 # movw %cx, aux
 # xor %edx, %edx
 # movb (%edi, %ecx), %dl
